@@ -160,6 +160,13 @@ snippet thm "theorem in elegantbook package by ganx" bA
 \\end{theorem}
 endsnippet
 
+snippet lst "listing environment by ganx" bA
+\begin{lstlisting}[escapeinside=``]
+	${1:${VISUAL}}
+\end{lstlisting}
+$0
+endsnippet
+
 # snippet beg "begin{} / end{}" bA
 # \\begin{$1}
 # 	$0
@@ -526,6 +533,65 @@ endsnippet
 
 snippet R0+ "R0+" iA
 \\R_0^+
+endsnippet
+
+#Formating text: italic, bold, underline, small capital, emphase ..
+snippet lsi "lst inline by ganx" iA
+\lstinline{${1}} ${0}
+endsnippet
+
+snippet ita "italic text"
+\textit{${1:${VISUAL:text}}}${0}
+endsnippet
+snippet bf "bold face text"
+\textbf{${1:${VISUAL:text}}}${0}
+endsnippet
+snippet bfc "bold face text"
+\textbf{${1:${VISUAL:text}}}~${0}
+endsnippet
+snippet under "underline text"
+\underline{${1:${VISUAL:text}}}${0}
+endsnippet
+snippet over "overline text"
+\overline{${1:${VISUAL:text}}}${0}
+endsnippet
+snippet emp "emphasize text by ganx"
+\emph{${1:${VISUAL:text}}}~${0}
+endsnippet
+snippet sc "small caps text"
+\textsc{${1:${VISUAL:text}}}${0}
+endsnippet
+#Choosing font
+snippet sf "sans serife text"
+\textsf{${1:${VISUAL:text}}}${0}
+endsnippet
+snippet rm "roman font text"
+\textrm{${1:${VISUAL:text}}}${0}
+endsnippet
+snippet tt "typewriter (monospace) text"
+\texttt{${1:${VISUAL:text}}}${0}
+endsnippet
+
+#Math font
+
+context "math()"
+snippet mcal "mathcal by castel" iA
+\mathcal{$1}$0
+endsnippet
+
+context "math()"
+snippet mrak "mathfrak by ganx" iA
+\mathfrak{$1}$0
+endsnippet
+
+context "math()"
+snippet mbb "mathbb by ganx" iA
+\mathbb{$1}$0
+endsnippet
+
+context "math()"
+snippet ms "mathscr by ganx" iA
+\mathscr{$1}$0
 endsnippet
 
 snippet plot "Plot" w
