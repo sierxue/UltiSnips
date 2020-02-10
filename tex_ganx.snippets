@@ -52,6 +52,21 @@ snippet xe "Set compilor xelatex by ganx" b
 %!TEX encoding = UTF-8 Unicode
 
 endsnippet
+
+snippet 'glo "Glossaries for CN and EN by ganx" b
+\newglossaryentry{$1}{
+	name={${2:cn}},
+	description={\emph{${3:en}}},
+	sort={$4}
+}
+\newglossaryentry{$1-en}{
+	name={${3:en}},
+	description={\emph{${2:cn}}},
+	sort={${3:en}}
+}
+$0
+endsnippet
+
 ######################################
 #  Environment (reserved letter: e)  #
 ######################################
