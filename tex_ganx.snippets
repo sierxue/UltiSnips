@@ -138,9 +138,13 @@ snippet exa "example environment with option and label by ganx" b
 endsnippet
 
 snippet exe "exercise environment with option and label by ganx" b
-\begin{exercise}\label{exe:${1:}}
-	${0:${VISUAL}}
+\begin{exercise}\label{exe:$1}
+	$0
 \end{exercise}
+\begin{cast}\label{cast:$1}
+	gVim: \href{media/casts/$1-vim.mp4}{$1-vim.mp4};
+	VSCode: \href{media/casts/$1-vscode.mp4}{$1-vscode.mp4}.
+\end{cast}
 endsnippet
 
 snippet intro "introduction in elegantbook package by ganx" bA
