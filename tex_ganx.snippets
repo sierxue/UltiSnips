@@ -77,6 +77,18 @@ snippet beg "begin{} / end{} by ganx" bA
 \\end{$1}
 endsnippet
 
+snippet cmnts "begin{commentShow} / end{} by ganx" bA
+\\begin{commentShow} % Label: $1
+	${0:${VISUAL}}
+\\end{commentShow}
+endsnippet
+
+snippet cmnt "begin{comment} / end{} by ganx" b
+\\begin{comment} % Label: $1
+	${0:${VISUAL}}
+\\end{comment}
+endsnippet
+
 snippet frame "frame environment by ganx"
 \begin{frame}[${1:c}]{${2:title}}
 	\begin{itemize}[<+- | alert@+>]
