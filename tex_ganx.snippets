@@ -71,6 +71,12 @@ endsnippet
 #  Environment (reserved letter: e)  #
 ######################################
 
+snippet beg "begin{} / end{} by ganx" bA
+\\begin{$1}\label{$2}
+	${0:${VISUAL}}
+\\end{$1}
+endsnippet
+
 snippet frame "frame environment by ganx"
 \begin{frame}[${1:c}]{${2:title}}
 	\begin{itemize}[<+- | alert@+>]
@@ -117,12 +123,6 @@ snippet ali "aligned envionment by ganx" bA
 	=& $2 \\\\
 	=& $3.
 \end{align*}$0
-endsnippet
-
-snippet beg "begin{} / end{} by ganx" bA
-\\begin{$1}\label{$2}
-	${0:${VISUAL}}
-\\end{$1}
 endsnippet
 
 snippet def "definition in elegantbook package by ganx" bA
