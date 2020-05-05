@@ -137,6 +137,18 @@ snippet ali "aligned envionment by ganx" bA
 \end{align*}$0
 endsnippet
 
+snippet beg "begin{} / end{} by ganx" bA
+\\begin{$1}\label{$2}
+	$0
+\\end{$1}
+endsnippet
+
+snippet eql "Labeled equation environment by ganx"
+\begin{equation} \label{eq:${1}}
+	${0:${VISUAL}}
+\end{equation}
+endsnippet
+
 snippet def "definition in elegantbook package by ganx" bA
 \\begin{definition}{$1}{$2}
 	$0
