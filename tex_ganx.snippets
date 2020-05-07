@@ -77,6 +77,12 @@ snippet beg "begin{} / end{} by ganx" bA
 \\end{$1}
 endsnippet
 
+snippet bel "begin{} / end{} by ganx" bA
+\\begin{$1}\label{$2}
+	$0
+\\end{$1}
+endsnippet
+
 snippet cmnts "begin{commentShow} / end{} by ganx" bA
 \\begin{commentShow} % Label: $1
 	${0:${VISUAL}}
@@ -130,17 +136,11 @@ snippet hideit "hide text in a beamer presentation by ganx" bA
 endsnippet
 
 snippet ali "aligned envionment by ganx" bA
-\begin{align*}
-	 & ${1:${VISUAL}} \\\\
-	=& $2 \\\\
-	=& $3.
-\end{align*}$0
-endsnippet
-
-snippet beg "begin{} / end{} by ganx" bA
-\\begin{$1}\label{$2}
-	$0
-\\end{$1}
+\begin{align}
+	  & ${1:${VISUAL}} \\\\
+	= & $2 \\\\
+	= & $3.
+\end{align}$0
 endsnippet
 
 snippet eql "Labeled equation environment by ganx"
