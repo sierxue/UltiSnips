@@ -135,7 +135,7 @@ snippet hideit "hide text in a beamer presentation by ganx" bA
 \hideit{${1:${VISUAL}}}$0
 endsnippet
 
-snippet ali "aligned envionment by ganx" bA
+snippet ali "aligned envionment by ganx" b
 \begin{align}
 	  & ${1:${VISUAL}} \\\\
 	= & $2 \\\\
@@ -143,8 +143,16 @@ snippet ali "aligned envionment by ganx" bA
 \end{align}$0
 endsnippet
 
+snippet ali* "aligned * envionment by ganx" bA
+\begin{align*}
+	  & ${1:${VISUAL}} \\\\
+	= & $2 \\\\
+	= & $3.
+\end{align*}$0
+endsnippet
+
 snippet eql "Labeled equation environment by ganx"
-\begin{equation} \label{eq:${1}}
+\begin{equation}\label{eq:${1}}
 	${0:${VISUAL}}
 \end{equation}
 endsnippet
@@ -312,6 +320,10 @@ if t[2] and t[2][0] not in [',', '.', '?', '-', ')', ' ']:
 else:
 	snip.rv = ''
 `$2
+endsnippet
+
+snippet mvk "Math inline by ganx" wA
+\\(${1:${VISUAL}}\\)$0
 endsnippet
 
 snippet dm "Math" wA
@@ -618,8 +630,8 @@ endsnippet
 snippet over "overline text"
 \overline{${1:${VISUAL:text}}}${0}
 endsnippet
-snippet emp "emphasize text by ganx"
-\emph{${1:${VISUAL:text}}}~${0}
+snippet emp "emphasize text"
+\emph{${1:${VISUAL:text}}}${0}
 endsnippet
 snippet sc "small caps text"
 \textsc{${1:${VISUAL:text}}}${0}
@@ -1153,6 +1165,86 @@ endsnippet
 
 snippet nll "two newlines by ganx" iA
 \\\\~\\\\$0
+endsnippet
+
+snippet tdnowin "todonote now and inline by ganx" bA
+\tdnowin[caption=
+	\textbf{Todo now by $1:} $2
+]{
+	\begin{minipage}{\linewidth}
+	\textbf{Todo now by $1:} $2
+		\begin{itemize}
+			\item $3
+			\item $4
+			\item $5
+		\end{itemize}
+	\end{minipage}
+}
+$0
+endsnippet
+
+snippet tdnextin "todonote next and inline by ganx" bA
+\tdnowin[caption=
+	\textbf{Todo next by $1:} $2
+]{
+	\begin{minipage}{\linewidth}
+	\textbf{Todo next by $1:} $2
+		\begin{itemize}
+			\item $3
+			\item $4
+			\item $5
+		\end{itemize}
+	\end{minipage}
+}
+$0
+endsnippet
+
+snippet tdstin "todonote sometime and inline by ganx" bA
+\tdnowin[caption=
+	\textbf{Todo sometime by $1:} $2
+]{
+	\begin{minipage}{\linewidth}
+	\textbf{Todo sometime by $1:} $2
+		\begin{itemize}
+			\item $3
+			\item $4
+			\item $5
+		\end{itemize}
+	\end{minipage}
+}
+$0
+endsnippet
+
+snippet tdinfoin "todonote improve and inline by ganx" bA
+\tdinfoin[caption=
+	\textbf{To improve by $1:} $2
+]{
+	\begin{minipage}{\linewidth}
+	\textbf{To improve by $1:} $2
+		\begin{itemize}
+			\item $3
+			\item $4
+			\item $5
+		\end{itemize}
+	\end{minipage}
+}
+$0
+endsnippet
+
+snippet tdipvin "todonote improve and inline by ganx" bA
+\tdipvin[caption=
+	\textbf{To improve by $1:} $2
+]{
+	\begin{minipage}{\linewidth}
+	\textbf{To improve by $1:} $2
+		\begin{itemize}
+			\item $3
+			\item $4
+			\item $5
+		\end{itemize}
+	\end{minipage}
+}
+$0
 endsnippet
 
 snippet mn "margin note by ganx" wA
