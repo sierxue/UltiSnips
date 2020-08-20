@@ -143,12 +143,32 @@ snippet ali "aligned envionment by ganx" b
 \end{align}$0
 endsnippet
 
+snippet alim "aligned envionment by ganx" b
+\begin{equation}
+\begin{aligned}
+	  & ${1:${VISUAL}} \\\\
+	= & $2 \\\\
+	= & $3.
+\end{aligned}$0
+\end{equation}
+endsnippet
+
 snippet ali* "aligned * envionment by ganx" bA
 \begin{align*}
 	  & ${1:${VISUAL}} \\\\
 	= & $2 \\\\
 	= & $3.
 \end{align*}$0
+endsnippet
+
+snippet alim* "aligned * envionment by ganx" bA
+\begin{equation*}
+\begin{aligned}
+	  & ${1:${VISUAL}} \\\\
+	= & $2 \\\\
+	= & $3.
+\end{aligned}$0
+\end{equation*}
 endsnippet
 
 snippet eql "Labeled equation environment by ganx"
@@ -314,7 +334,7 @@ endsnippet
 
 # Add ')'
 snippet mk "Math revised by ganx" wA
-\\(${1}\\)`!p
+$${1}$`!p
 if t[2] and t[2][0] not in [',', '.', '?', '-', ')', ' ']:
 	snip.rv = ' '
 else:
@@ -765,7 +785,7 @@ endsnippet
 
 context "math()"
 snippet \\\ "setminus" iA
-\setminus
+\setminus 
 endsnippet
 
 snippet >> ">>" iA
@@ -885,7 +905,7 @@ snippet tt "text" iA
 endsnippet
 
 context "math()"
-snippet case "cases by ganx" wA
+snippet case "cases by ganx" bA
 \begin{cases}
 	$1, & ${2:\text{if }} $3, \\\\
 	$4, & ${5:\text{if }} $0.
@@ -919,11 +939,11 @@ snippet lz "\noindent\textbf{例15~~} by ganx" iA
 \noindent\textbf{例$1~~}~$0
 endsnippet
 
-snippet ydh "Chinese quote text by ganx" iA
+snippet dyh "dan yin hao Chinese quote text by ganx" iA
 「${1:${VISUAL:text}}」${0}
 endsnippet
 
-snippet yh "Chinese double quote text by ganx" iA
+snippet syh "shuang yin hao Chinese double quote text by ganx" iA
 『${1:${VISUAL:text}}』${0}
 endsnippet
 
@@ -1221,10 +1241,10 @@ endsnippet
 
 snippet tdinfoin "todonote improve and inline by ganx" bA
 \tdinfoin[caption=
-	\textbf{To improve by $1:} $2
+	\textbf{$1:} $2
 ]{
 	\begin{minipage}{\linewidth}
-	\textbf{To improve by $1:} $2
+	\textbf{$1:} $2
 		\begin{itemize}
 			\item $3
 			\item $4
@@ -1302,11 +1322,32 @@ snippet "([a-zA-Z])bar" "bar" riA
 endsnippet
 
 context "math()"
+snippet "([a-zA-Z])under" "underline" riA
+\underline{`!p snip.rv=match.group(1)`}
+endsnippet
+
+context "math()"
 snippet "([a-zA-Z])vec" "vec" riA
 \vec{`!p snip.rv=match.group(1)`}
 endsnippet
 
 priority 10
+
+context "math()"
+snippet "wdh" "widehat" riA
+\widehat{$1}$0
+endsnippet
+
+context "math()"
+snippet "wdp" "wideparen" riA
+\wideparen{$1}$0
+endsnippet
+
+context "math()"
+snippet "wdt" "widetilde" riA
+\widetilde{$1}$0
+endsnippet
+
 context "math()"
 snippet "hat" "hat" riA
 \hat{$1}$0
