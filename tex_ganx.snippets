@@ -3,22 +3,16 @@ priority 0
 extends texmath, ganxCasteltex
 
 global !p
-texMathZones = ['texMathZone'+x for x in ['A', 'AS', 'B', 'BS', 'C', 'CS', 'D', 'DS', 'E', 'ES', 'F', 'FS', 'G', 'GS', 'H', 'HS', 'I', 'IS', 'J', 'JS', 'K', 'KS', 'L', 'LS', 'DS', 'V', 'W', 'X', 'Y', 'Z']]
-
-texIgnoreMathZones = ['texMathText']
-
-texMathZoneIds = vim.eval('map('+str(texMathZones)+", 'hlID(v:val)')")
-texIgnoreMathZoneIds = vim.eval('map('+str(texIgnoreMathZones)+", 'hlID(v:val)')")
-
-ignore = texIgnoreMathZoneIds[0]
-
 def math():
-	synstackids = vim.eval("synstack(line('.'), col('.') - (col('.')>=2 ? 1 : 0))")
-	try:
-		first = next(i for i in reversed(synstackids) if i in texIgnoreMathZoneIds or i in texMathZoneIds)
-		return first != ignore
-	except StopIteration:
-		return False
+	return vim.eval('vimtex#syntax#in_mathzone()') == '1'
+
+def comment():
+	return vim.eval('vimtex#syntax#in_comment()') == '1'
+
+def env(name):
+	[x,y] = vim.eval("vimtex#env#is_inside('" + name + "')")
+	return x != '0' and y != '0'
+
 endglobal
 
 snippet today "Date"
@@ -47,24 +41,64 @@ $0
 \end{document}
 endsnippet
 
-snippet xe "Set compilor xelatex by ganx" b
-%!TEX program = xelatex
-%!TEX encoding = UTF-8 Unicode
+snippet secsub "Section and subsections by ganx" bA
+\section{$1}%
+\label{sec:$2}
+\subsection{预备知识}%
+\label{sub:$2_prerequisites}
+
+$0
+
+\subsection{关键问题}%
+\label{sub:$2}
+
+
+
+\subsection*{答案}
+
 
 endsnippet
 
-snippet 'glo "Glossaries for CN and EN by ganx" b
+snippet xe "Set compilor xelatex by ganx" b
+%!TEX program = xelatex
+%!TEX encoding = UTF-8 Unicode
+endsnippet
+
+snippet gls "Glossaries for CN and EN by ganx" bA
 \newglossaryentry{$1}{
-	name={${2:cn}},
-	description={\emph{${3:en}}},
-	sort={$4}
+	name={$2},
+	description={\emph{$3}},
+	sort={$1}
 }
-\newglossaryentry{$1-en}{
-	name={${3:en}},
-	description={\emph{${2:cn}}},
-	sort={${3:en}}
-}
-$0
+\newglossaryentry{${3/\\\w+\{(.*?)\}|\\(.)|(\w+)|([^\w\\]+)/(?4:_:\L$1$2$3\E)/ga}}{
+	name={$3},
+	description={\emph{$2}},
+	sort={$3}
+}$0
+endsnippet
+
+snippet gln "Glossaries for notations by ganx" bA
+\newglossaryentry{$1}{
+	name={$$2$},
+	description={\emph{$3}},
+	sort={$1}
+}$0
+endsnippet
+
+snippet glr "Glossaries reference by ganx" iA
+\gls{$1}$0
+endsnippet
+
+snippet glg "Glossaries reference by ganx" iA
+\gls{$1} (\gls{$2})$0
+endsnippet
+
+snippet fah "Link to answers" bA
+\begin{hint}\label{hnt:pr:$1}
+\end{hint}
+\noindent\faHandPointerO ~\hyperlink{target:pr:$1}{前往答案}
+\noindent\faHandPointerO ~\hyperref[pr:$1]{返回问题~\ref{pr:$1}}
+\hypertarget{target:pr:$1}{}$0
 endsnippet
 
 ######################################
@@ -72,27 +106,21 @@ endsnippet
 ######################################
 
 snippet beg "begin{} / end{} by ganx" bA
-\\begin{$1}\label{$2}
+\begin{$1}\label{$2}
 	${0:${VISUAL}}
-\\end{$1}
-endsnippet
-
-snippet bel "begin{} / end{} by ganx" bA
-\\begin{$1}\label{$2}
-	$0
-\\end{$1}
+\end{$1}
 endsnippet
 
 snippet cmnts "begin{commentShow} / end{} by ganx" bA
-\\begin{commentShow} % Label: $1
-	${0:${VISUAL}}
-\\end{commentShow}
+\begin{commentShow}
+	${1:${VISUAL}}
+\end{commentShow}$0
 endsnippet
 
 snippet cmnt "begin{comment} / end{} by ganx" b
-\\begin{comment} % Label: $1
-	${0:${VISUAL}}
-\\end{comment}
+\begin{comment}
+	${1:${VISUAL}}
+\end{comment}$0
 endsnippet
 
 snippet frame "frame environment by ganx"
@@ -135,52 +163,61 @@ snippet hideit "hide text in a beamer presentation by ganx" bA
 \hideit{${1:${VISUAL}}}$0
 endsnippet
 
-snippet ali "aligned envionment by ganx" b
+snippet ali "align envionment by ganx" b
 \begin{align}
-	  & ${1:${VISUAL}} \\\\
-	= & $2 \\\\
-	= & $3.
+	${1:${VISUAL}}
+	&= $2 \\notag \\\\
+	&= $3 \\label{eq:$4}.
 \end{align}$0
 endsnippet
 
-snippet alim "aligned envionment by ganx" b
-\begin{equation}
-\begin{aligned}
-	  & ${1:${VISUAL}} \\\\
-	= & $2 \\\\
-	= & $3.
-\end{aligned}$0
-\end{equation}
-endsnippet
-
-snippet ali* "aligned * envionment by ganx" bA
+snippet ali* "align* envionment by ganx" bA
 \begin{align*}
-	  & ${1:${VISUAL}} \\\\
-	= & $2 \\\\
-	= & $3.
+	${1:${VISUAL}}
+	&= $2 \\\\
+	&= $3.
 \end{align*}$0
 endsnippet
 
-snippet alim* "aligned * envionment by ganx" bA
-\begin{equation*}
+snippet alid "aligned envionment by ganx" b
 \begin{aligned}
-	  & ${1:${VISUAL}} \\\\
-	= & $2 \\\\
-	= & $3.
+	${1:${VISUAL}}
+	&= $2 \\\\
+	&= $3.
 \end{aligned}$0
-\end{equation*}
 endsnippet
 
-snippet eql "Labeled equation environment by ganx"
+snippet alid* "aligned* envionment by ganx" bA
+\begin{aligned*}
+	${1:${VISUAL}}
+	&= $2 \\\\
+	&= $3.
+\end{aligned*}$0
+endsnippet
+
+snippet 'eq "Labeled equation environment by ganx" bA
 \begin{equation}\label{eq:${1}}
 	${0:${VISUAL}}
 \end{equation}
 endsnippet
 
-snippet def "definition in elegantbook package by ganx" bA
-\\begin{definition}{$1}{$2}
+snippet 'ml "Labeled multline equation environment by ganx" bA
+\begin{multline}\label{eq:${1}}
+	${2} \\\\
+	${0:${VISUAL}}
+\end{multline}
+endsnippet
+
+snippet crl "corollary in elegantbook package by ganx" bA
+\begin{corollary}[$1]\label{cor:$2}
 	$0
-\\end{definition}
+\end{corollary}
+endsnippet
+
+snippet def "definition in elegantbook package by ganx" bA
+\begin{definition}[$1]\label{def:$2}
+	$0
+\end{definition}
 endsnippet
 
 snippet exa "example environment with option and label by ganx" b
@@ -189,7 +226,59 @@ snippet exa "example environment with option and label by ganx" b
 \end{example}
 endsnippet
 
-snippet exe "exercise environment with option and label by ganx" b
+snippet exep "exercise environment with option and label by ganx" bA
+\begin{exercise}\label{exe:$1}
+	$2
+\end{exercise}
+\begin{proof}\label{pf:$1}
+	$0
+\end{proof}
+endsnippet
+
+snippet pf "proof environment with label by ganx" bA
+\begin{proof}\label{pf:$1}
+	$0
+\end{proof}
+endsnippet
+
+snippet exes "exercise environment with option and label by ganx" bA
+\begin{exercise}\label{exe:$1}
+	$2
+\end{exercise}
+\begin{solution}\label{sol:$1}
+	$0
+\end{solution}
+endsnippet
+
+snippet prp "problem environment with option and label by ganx" bA
+\begin{problem}[$1]\label{pr:$2}
+	$3
+\end{problem}
+% \begin{hint}\label{hnt:pr:$2}
+% \end{hint}
+% \noindent\faHandPointerO ~\hyperlink[sol:pr:$2]{前往答案}
+% \noindent\faHandPointerO ~\hyperref[pr:$2]{返回问题~\ref{pr:$2}}
+% \hypertarget{sol:pr:$2}{}答案
+% \begin{proof}\label{pf:pr:$2}
+% 	$0
+% \end{proof}
+endsnippet
+
+snippet prs "problem environment with option and label by ganx" bA
+\begin{problem}[$1]\label{pr:$2}
+	$3
+\end{problem}
+% \begin{hint}\label{hnt:pr:$2}
+% \end{hint}
+% \noindent\faHandPointerO ~\hyperlink{target:pr:$2}{前往答案}
+% \noindent\faHandPointerO ~\hyperref[pr:$2]{返回问题~\ref{pr:$2}}
+% \hypertarget{target:pr:$2}{}
+% \begin{solution}\label{sol:pr:$2}
+% 	$0
+% \end{solution}
+endsnippet
+
+snippet exec "exercise environment with option and label by ganx" b
 \begin{exercise}\label{exe:$1}
 	$0
 \end{exercise}
@@ -200,16 +289,16 @@ snippet exe "exercise environment with option and label by ganx" b
 endsnippet
 
 snippet intro "introduction in elegantbook package by ganx" bA
-\\begin{introduction}[导读]
+\begin{introduction}[导读]
 	\item $1
 	\item $0
-\\end{introduction}
+\end{introduction}
 endsnippet
 
 snippet lem "lemma in elegantbook package by ganx" bA
-\\begin{lemma}{$1}{$2}
+\begin{lemma}[$1]\label{lem:$2}
 	$0
-\\end{lemma}
+\end{lemma}
 endsnippet
 
 snippet note "note environment with option and label by ganx" b
@@ -246,7 +335,7 @@ snippet table "Table environment by ganx" b
 endsnippet
 
 snippet thm "theorem in elegantbook package by ganx" bA
-\\begin{theorem}{$1}{$2}
+\\begin{theorem}[$1]\label{thm:$2}
 	$0
 \\end{theorem}
 endsnippet
@@ -283,7 +372,7 @@ endsnippet
 snippet fig "Figure environment" b
 \begin{figure}[${1:htpb}]
 	\centering
-	${2:\includegraphics[width=0.8\textwidth]{$3}}
+	${2:\includegraphics[width=0.9\textwidth]{$3}}
 	\caption{${4:$3}}
 	\label{fig:${5:${3/\W+/-/g}}}
 \end{figure}
@@ -297,7 +386,7 @@ endsnippet
 
 # https://tex.stackexchange.com/questions/54055/using-lower-case-roman-numerals-in-enumerate-lists
 # https://tex.stackexchange.com/a/58853/104838
-snippet enumr "Enumerate roman numbers) by ganx" bA
+snippet enur "Enumerate roman numbers) by ganx" bA
 \begin{enumerate}[label=\roman*)]
 	\item $0
 \end{enumerate}
@@ -342,17 +431,13 @@ else:
 `$2
 endsnippet
 
-snippet qw "Math inline by ganx" wA
-\\(${1:${VISUAL}}\\)$0
-endsnippet
-
 snippet mvk "Math inline by ganx" wA
 \\(${1:${VISUAL}}\\)$0
 endsnippet
 
 snippet dm "Math" wA
 \[
-    ${1:${VISUAL}}
+	${1:${VISUAL}}
 \] $0
 endsnippet
 
@@ -453,11 +538,11 @@ snippet floor "floor" iA
 endsnippet
 
 snippet pmat "pmat" iA
-\begin{pmatrix} $1 \end{pmatrix} $0
+\begin{pmatrix} $1 \end{pmatrix}$0
 endsnippet
 
 snippet bmat "bmat" iA
-\begin{bmatrix} $1 \end{bmatrix} $0
+\begin{bmatrix} $1 \end{bmatrix}$0
 endsnippet
 
 context "math()"
@@ -643,10 +728,10 @@ snippet ita "italic text"
 \textit{${1:${VISUAL:text}}}${0}
 endsnippet
 snippet bf "bold face text"
-\textbf{${1:${VISUAL:text}}}${0}
+{\bf ${1:${VISUAL:text}}}${0}
 endsnippet
-snippet bfc "bold face text"
-\textbf{${1:${VISUAL:text}}}~${0}
+snippet bfc "bold face text followed by a space"
+{\bf ${1:${VISUAL:text}}}~${0}
 endsnippet
 snippet under "underline text"
 \underline{${1:${VISUAL:text}}}${0}
@@ -674,9 +759,89 @@ endsnippet
 #Math font
 
 context "math()"
-snippet mcal "mathcal by castel" iA
-\mathcal{$1}$0
+snippet 'mcf "mathcal by ganx" iA
+\\mathcal{F}
 endsnippet
+
+context "math()"
+snippet 'mcg "mathcal by ganx" iA
+\\mathcal{G}
+endsnippet
+
+context "math()"
+snippet 'mch "mathcal by ganx" iA
+\\mathcal{G}
+endsnippet
+
+context "math()"
+snippet 'mcx "mathcal by ganx" iA
+\\mathcal{X}
+endsnippet
+
+context "math()"
+snippet 'mcy "mathcal by ganx" iA
+\\mathcal{Y}
+endsnippet
+
+context "math()"
+snippet mcal "mathfrak by ganx" iA
+\\mathcal{$1}$0
+endsnippet
+
+context "math()"
+snippet mrak "mathfrak by ganx" iA
+\mathfrak{$1}$0
+endsnippet
+
+context "math()"
+snippet mbb "mathbb by ganx" iA
+\mathbb{$1}$0
+endsnippet
+
+context "math()"
+snippet ms "mathscr by ganx" iA
+\mathscr{$1}$0
+endsnippet
+
+snippet plot "Plot" w
+\begin{figure}[$1]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			xmin= ${2:-10}, xmax= ${3:10},
+			ymin= ${4:-10}, ymax = ${5:10},
+			axis lines = middle,
+		]
+			\addplot[domain=$2:$3, samples=${6:100}]{$7};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{$8}
+	\label{${9:$8}}
+\end{figure}
+endsnippet
+
+snippet nn "Tikz node" w
+\node[$5] (${1/[^0-9a-zA-Z]//g}${2}) ${3:at (${4:0,0}) }{$${1}$};
+$0
+endsnippet
+
+snippet lll "l" iA
+\ell
+endsnippet
+
+context "math()"
+snippet nabl "nabla" iA
+\nabla 
+endsnippet
+
+context "math()"
+snippet xx "cross" iA
+\times 
+endsnippet
+
+priority 100
+# snippet * "cdot" iA
+# \cdot 
 
 context "math()"
 snippet mrak "mathfrak by ganx" iA
@@ -752,7 +917,7 @@ endsnippet
 
 priority 200
 context "math()"
-snippet '(?<!\\)(arcsin|arccos|arctan|arccot|arccsc|arcsec|alpha|beta|delta|Delta|epsilon|lambda|Lambda|phi|pi|rho|tau|theta|Theta|varphi|xi|zeta|int)' "ln" rwA
+snippet '(?<!\\)(arcsin|arccos|arctan|arccot|arccsc|arcsec|alpha|beta|delta|exp|epsilon|lambda|Lambda|omega|Omega|phi|pi|rho|tau|theta|Theta|varphi|xi|zeta|int)' "ln" rwA
 \\`!p snip.rv = match.group(1)`
 endsnippet
 
@@ -935,6 +1100,20 @@ endsnippet
 #  Text related auto-expansion (reserved letter: t)  #
 ######################################################
 
+snippet tch "teaching notes by ganx" bA
+\teach{
+	${1:${VISUAL}}
+}$0
+endsnippet
+
+snippet shu1 "书~\cite{shreve_stochastic_2004} by ganx in sc4f" iA
+书~\cite{shreve_stochastic_2004}
+endsnippet
+
+snippet shu2 "书~\cite{shreve_stochastic_2008} by ganx in sc4f" iA
+书~\cite{shreve_stochastic_2008}
+endsnippet
+
 snippet lz "\noindent\textbf{例15~~} by ganx" iA
 \noindent\textbf{例$1~~}~$0
 endsnippet
@@ -1024,7 +1203,7 @@ endsnippet
 ##################################
 
 snippet 'ci "integral by ganx" iA
-\int_{${1:-\infty}}^{${2:}} ${3:${VISUAL}}\,{\rm d}$0
+\int_{${1:0}}^{${2:t}} ${3:${VISUAL}} \mathop{}\!\mathrm{d}{${4:t}}$0
 endsnippet
 
 snippet 'dif "dif by ganx" wA
@@ -1035,12 +1214,20 @@ endsnippet
 #  Probability and Statistics (Reserved letter: p)  #
 #####################################################
 
-snippet 'mE "random variable X by ganx" iA
-$\mathbb{E}\\{${1:${VISUAL}}\\}$$0
+snippet 'ps "random variable X by ganx" iA
+(\Omega, \mathcal{F}, \mathbb{P})
 endsnippet
 
-snippet 'E "random variable X by ganx" iA
-\mathbb{E}\\{${1:${VISUAL}}\\}$0
+snippet 'mpe "random variable X by ganx" iA
+$\mathbb{E}[${1:${VISUAL}}]$$0
+endsnippet
+
+snippet 'pne "random variable X by ganx" iA
+\widetilde{\mathbb{E}}\left[ ${1:${VISUAL}} \right]$0
+endsnippet
+
+snippet 'pe "random variable X by ganx" iA
+\mathbb{E}\left[ ${1:${VISUAL}} \right]$0
 endsnippet
 
 snippet 'pcf "conditional prob. dist. fun by ganx" iA
@@ -1059,11 +1246,11 @@ snippet 'mpcF "math conditional cumulative dist. fun by ganx" iA
 $F(x|\theta)$
 endsnippet
 
-snippet 'mpp "math posterior dist. fun by ganx" iA
+snippet 'mpps "math posterior dist. fun by ganx" iA
 $\pi(x|\theta)$
 endsnippet
 
-snippet 'pp "posterior dist. fun by ganx" iA
+snippet 'pps "posterior dist. fun by ganx" iA
 \pi(x|\theta)
 endsnippet
 
@@ -1071,19 +1258,27 @@ snippet 'mbi "binom{}{} by ganx" iA
 \binom{${1:n}}{${2:x}}$0
 endsnippet
 
-snippet 'mP "random variable X by ganx" iA
+snippet 'mp( "random variable X by ganx" iA
+$\mathbb{P}(${1:${VISUAL}})$$0
+endsnippet
+
+snippet 'mp{ "random variable X by ganx" iA
 $\mathbb{P}\\{${1:${VISUAL}}\\}$$0
 endsnippet
 
-snippet 'P "random variable X by ganx" iA
-\mathbb{P}\\{${1:${VISUAL}}\\}$0
+snippet 'pnp "random variable X by ganx" iA
+\widetilde{\mathbb{P}\left\\{${1:${VISUAL}}\right\\}}$0
+endsnippet
+
+snippet 'pp "random variable X by ganx" iA
+\mathbb{P}\left[${1:${VISUAL}}\right]$0
 endsnippet
 
 snippet 'pbi "Binomial distribution by ganx" iA
 \mathscr{B}(n,\theta)
 endsnippet
 
-snippet 'pn "Normal distribution by ganx" iA
+snippet 'pdn "Normal distribution by ganx" iA
 \mathscr{N}($1,$2)$0
 endsnippet
 
@@ -1143,12 +1338,16 @@ snippet 'am "AP order shceme by ganx" iA
 (Z,\hat{x}) 
 endsnippet
 
-snippet i== "$i=1,2,\ldots,n$ by ganx" wA
-$${1:i}=1,2,\ldots,${2:n}$$0
+snippet 'i= "i=1,2,\ldots,n by ganx" iA
+${1:i} = 1, 2, \ldots, ${2:N}$0
 endsnippet
 
-snippet aln "$a_1,a_2,\ldots,a_n$ by ganx" wA
-$${1:a}_1,${2:a}_2,\ldots,${3:a}_${4:n}$$0
+snippet 'n= "n=1,2,\ldots,n by ganx" iA
+${1:n} = 1, 2, \ldots, ${2:N}$0
+endsnippet
+
+snippet aln "a_1,a_2,\ldots,a_n by ganx" wA
+${1:a}_1,${2:a}_2,\ldots,${3:a}_${4:n}$0
 endsnippet
 
 snippet 'kc "$K$-convex by ganx" wA
@@ -1277,7 +1476,7 @@ endsnippet
 
 snippet nt "note in beamer by ganx" bA
 \note{提问：${1:${VISUAL}}？ \\\\}
-\note{\hspace{1.1cm} 提示：$2。${3:\\\\~}\\\\}$0
+\note{\hspace{0.95cm} 提示：$2。${3:\\\\~}\\\\}$0
 endsnippet
 
 snippet sout "delete text by ganx" wA
